@@ -1,0 +1,51 @@
+// AUTOMATICALLY GENERATED FILE. PLEASE DO NOT MODIFY IT MANUALLY
+
+// PIO Unified Debugger
+//
+// Documentation: https://docs.platformio.org/page/plus/debugging.html
+// Configuration: https://docs.platformio.org/page/projectconf/section_env_debug.html
+
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "cwd": "${workspaceRoot}",
+            "executable": "/home/stefaan/Documents/PlatformIO/Projects/nrf51/arduino/KX022Test/.pioenvs/bwatch/firmware.elf",
+            "name": "Cortex Debug NRF51",
+            "request": "attach",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "armToolchainPath": "/home/stefaan/.platformio/packages/toolchain-gccarmnoneeabi/bin",
+            "device": "nrf51",
+            "svdFile": "/home/stefaan/fun-elec/nrf51/nrf51.svd",
+            "showDevDebugOutput": false,
+            "v1": false,
+            "configFiles": [
+                "interface/stlink.cfg",
+                "target/nrf51.cfg"
+            ]
+        },       
+        {
+            "type": "platformio-debug",
+            "request": "launch",
+            "name": "PIO Debug",
+            "executable": "/home/stefaan/Documents/PlatformIO/Projects/nrf51/arduino/LowPowerTest/.pioenvs/bwatch/firmware.elf",
+            "toolchainBinDir": "/home/stefaan/.platformio/packages/toolchain-gccarmnoneeabi/bin",
+            "svdPath": "/home/stefaan/.platformio/platforms/nordicnrf51/misc/svd/nrf51.svd",
+            "preLaunchTask": {
+                "type": "PlatformIO",
+                "task": "Pre-Debug"
+            },
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "type": "platformio-debug",
+            "request": "launch",
+            "name": "PIO Debug (skip Pre-Debug)",
+            "executable": "/home/stefaan/Documents/PlatformIO/Projects/nrf51/arduino/LowPowerTest/.pioenvs/bwatch/firmware.elf",
+            "toolchainBinDir": "/home/stefaan/.platformio/packages/toolchain-gccarmnoneeabi/bin",
+            "svdPath": "/home/stefaan/.platformio/platforms/nordicnrf51/misc/svd/nrf51.svd",
+            "internalConsoleOptions": "openOnSessionStart"
+        }
+    ]
+}

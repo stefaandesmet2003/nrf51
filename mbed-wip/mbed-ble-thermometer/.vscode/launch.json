@@ -1,0 +1,34 @@
+// AUTOMATICALLY GENERATED FILE. PLEASE DO NOT MODIFY IT MANUALLY
+
+// PIO Unified Debugger
+//
+// Documentation: https://docs.platformio.org/page/plus/debugging.html
+// Configuration: https://docs.platformio.org/page/projectconf/section_env_debug.html
+
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "platformio-debug",
+            "request": "launch",
+            "name": "PIO Debug",
+            "executable": "/home/stefaan/Documents/PlatformIO/Projects/nrf51/mbed/mbed-ble-thermometer/.pioenvs/nrf51_dongle_latest/firmware.elf",
+            "toolchainBinDir": "/home/stefaan/.platformio/packages/toolchain-gccarmnoneeabi/bin",
+            "svdPath": "/home/stefaan/.platformio/platforms/nordicnrf51@src-48ba54b3e0aa967a87b5da75dadbbf9e/misc/svd/nrf51.svd",
+            "preLaunchTask": {
+                "type": "PlatformIO",
+                "task": "Pre-Debug"
+            },
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "type": "platformio-debug",
+            "request": "launch",
+            "name": "PIO Debug (skip Pre-Debug)",
+            "executable": "/home/stefaan/Documents/PlatformIO/Projects/nrf51/mbed/mbed-ble-thermometer/.pioenvs/nrf51_dongle_latest/firmware.elf",
+            "toolchainBinDir": "/home/stefaan/.platformio/packages/toolchain-gccarmnoneeabi/bin",
+            "svdPath": "/home/stefaan/.platformio/platforms/nordicnrf51@src-48ba54b3e0aa967a87b5da75dadbbf9e/misc/svd/nrf51.svd",
+            "internalConsoleOptions": "openOnSessionStart"
+        }
+    ]
+}
