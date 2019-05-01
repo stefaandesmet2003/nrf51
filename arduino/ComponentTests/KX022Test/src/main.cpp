@@ -1,3 +1,9 @@
+/*
+  a test application to experiment with the KX022 accelerometer
+  with a junky serial parser to set the kx022 registers
+  one day the interrupt handling is supposed to be in the kx022 driver 
+  using the oled display for some basic feedback
+*/
 #include <Wire.h>
 #include <SPI.h>
 #include "KX022.h"
@@ -226,52 +232,3 @@ void KX022_DoInterrupts(void) {
   NVIC_EnableIRQ(GPIOTE_IRQn);  
 
 } // KX022_DoInterrupts
-
-
-
-
-/*
-void KX022_DoInterrupts(void) {
-
-  // read INS2
-  uint8_t ins2 = acc.readRegister(KX022_INS2);
-  if (ins2 & INS2_BFI)
-    Serial.println("BFI");
-  if (ins2 & INS2_WMI)
-    Serial.println("WMI");
-  if (ins2 & INS2_DRDY)
-    Serial.println("DRDY");
-  if (ins2 & INS2_TDTS) {
-    if ((ins2 & INS2_TDTS) == INS2_SINGLETAP)
-      Serial.print("1tap - ");
-    if ((ins2 & INS2_TDTS) == INS2_DOUBLETAP)
-      Serial.print("2tap - ");
-    // find motion direction
-    uint8_t direction = acc.readRegister(KX022_INS1);
-    Serial.println(direction,HEX);
-  }
-
-  if (ins2 & INS2_WUFS) {
-    Serial.print("wakeup - ");
-    // find motion direction
-    uint8_t direction = acc.readRegister(KX022_INS3);
-    Serial.println(direction,HEX);
-  }
-  if (ins2 & INS2_TPS) {
-    Serial.print("tilt - ");
-    // find tilt direction
-    uint8_t prevDirection = acc.readRegister(KX022_TSPP);
-    uint8_t curDirection = acc.readRegister(KX022_TSCP);
-    Serial.print(prevDirection,HEX); Serial.print("->");
-    Serial.println(curDirection,HEX);
-  }
-
-  // clear int
-  acc.readRegister(KX022_INT_REL);
-
-  kx022InterruptFlag = false;
-  NVIC_EnableIRQ(GPIOTE_IRQn);  
-
-} // KX022_DoInterrupts
-
-*/

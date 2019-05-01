@@ -1,3 +1,7 @@
+/* not sure anymore what this app is doing compared to kx022Test
+--> cleanup todo 
+*/
+
 #include <Wire.h>
 #include <SPI.h>
 #include "KX022.h"

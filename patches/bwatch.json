@@ -1,0 +1,61 @@
+{
+  "build": {
+    "core": "nRF5",
+    "cpu": "cortex-m0",
+    "extra_flags": "-DARDUINO_GENERIC -DUSE_LFRC",
+    "f_cpu": "32000000L",
+    "ldscript": "nrf51_xxaa.ld",
+    "mcu": "nrf51822",
+    "variant": "Generic"
+  },
+  "connectivity": [
+    "bluetooth"
+  ],
+  "debug": {
+    "default_tools": [
+      "stlink"
+    ],
+    "jlink_device": "nRF51822_xxAC",
+    "onboard_tools": [
+      "cmsis-dap",
+      "jlink"
+    ],
+    "svd_path": "nrf51.svd",
+    "tools": {
+      "stlink": {
+        "default": true,
+        "server": {
+          "arguments": [
+            "-f",
+            "scripts/interface/stlink.cfg",
+            "-c",
+            "transport select hla_swd; set WORKAREASIZE 0x4000;",
+            "-f",
+            "target/nrf51.cfg"
+          ],
+          "executable": "bin/openocd",
+          "package": "tool-openocd"
+        }
+      }
+    }    
+  },
+  "frameworks": [
+    "arduino",
+    "mbed"
+  ],
+  "name": "NMBS Smartwatch",
+  "upload": {
+    "maximum_ram_size": 16384,
+    "maximum_size": 131072,
+    "protocol": "stlink",
+    "protocols": [
+      "stlink",
+      "cmsis-dap",
+      "jlink",
+      "nrfjprog",
+      "mbed"
+    ]
+  },
+  "url": "https://developer.mbed.org/platforms/Nordic-nRF51-Dongle/",
+  "vendor": "Nordic"
+}

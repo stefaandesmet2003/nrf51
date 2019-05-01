@@ -1,4 +1,8 @@
-// https://webbluetoothcg.github.io/demos/heart-rate-sensor/
+/*
+  a BLE GATT compatible implementation of a completely fake heartrate sensor
+  can be tested with webbluetooth : 
+    https://webbluetoothcg.github.io/demos/heart-rate-sensor/
+*/
 
 // Import libraries (BLEPeripheral depends on SPI)
 #include <SPI.h>

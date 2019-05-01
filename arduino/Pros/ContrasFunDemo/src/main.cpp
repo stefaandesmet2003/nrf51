@@ -1,3 +1,10 @@
+/* a completely useless demo using a few features of the b-watch
+   while making fun of work
+   - display
+   - ui based on recognizing taps/double taps by the accelerometer
+   - raw accelero data
+*/
+
 #include <Wire.h>
 #include <U8g2lib.h> // let's show output on the screen
 #include "KX022.h"

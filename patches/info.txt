@@ -1,0 +1,2 @@
+copy bwatch.json to ~/.platformio/platforms/nordicnrf51/boards
+copy variant.h to ~/.platformio/packages/framework-arduinonordicnrf5/variants/Generic

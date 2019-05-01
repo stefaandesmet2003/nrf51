@@ -1,3 +1,11 @@
+/* a sketch to get the most out of BLE speed
+  pushing as much accelerometer data as possible over a BLE UART connection
+  turns out that this gives a lot of errors in the default BLESerial implementation
+  (error returns not handled, leading to buffer overrides etc. )
+  use ../test/kx022logger.html to display the data
+  not working 100%
+*/
+
 #include <Wire.h>
 #include <SPI.h>
 #include "KX022.h"

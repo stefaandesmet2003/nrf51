@@ -1,10 +1,12 @@
+/*
+  test for the QDEC peripheral with a EC11 rotary encoder
+  using the rx/tx pins on the b-watch board
+  so can't use serial for this test -> use oled instead
+  EC11 seems to produce 4 pulses for every click
+  no difference with debounce filter on/off
+  sample period 6 or 7 & debounce filter on -> no pulses detected
+*/
 
-//EC11 geeft wel systematisch 4 pulsen voor elke click
-// met debounce filter aan/uit maakt niet uit
-// met sample period 6 of 7 en debounce filter aan, geen pulsen
-
-// test van de qdec
-// op de 2 pinnen die we nog over hebben (tx & rx)
 #include <Arduino.h>
 #include "nrf.h"
 #include <U8g2lib.h>

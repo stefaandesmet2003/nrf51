@@ -1,7 +1,10 @@
+/* a bunch of experiments :
+  - SYSTEM OFF and WFI cpu sleep 
+  - internal temperature sensor
+  - watchdog function
+*/
+/* nrf.h needed for register manipulation */
 
-// druk op 't knoppeke en de vibrator gaat aan!
-// licht gaat een beetje uit op het display 
-// target wel gevoed via st-link 
 #include <Arduino.h>
 #include "nrf.h"
 
@@ -16,9 +19,7 @@ void watchdogSetup();
 void testSystemOffAndWatchdog();
 
 
-// the setup function runs once when you press reset or power the board
 void setup() {
-  // initialize digital pin LED_BUILTIN as an output.
   pinMode(pinBuzzer, OUTPUT);
   pinMode (pinButton, INPUT_PULLUP);
   digitalWrite (pinBuzzer,0); // buzzer uit
@@ -123,6 +124,7 @@ void loop() {
 } // loop
 
 // godverdomme, 2de keer dat ik mij hieraan laat vangen!!
+// don't forget extern "C" !
 extern "C"{
 void GPIOTE_IRQHandler(void)
 {

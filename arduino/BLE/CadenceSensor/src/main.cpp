@@ -1,4 +1,14 @@
-// https://webbluetoothcg.github.io/demos/heart-rate-sensor/
+/* 
+  a BLE GATT compatible cadence sensor (speed & cadence service)
+  the reed contact is wired between RX (pin 0.17) & GND
+  TODO :
+   - test lower TX power to save battery (-40 is too low)
+     (via ui preferable)
+   - more readable font
+   - more inride stats (ride time, avg cadence)
+   - store ride data in spiffs filesystem for analysis
+   - wireless variant using accelerometer 
+*/
 
 // peripheral manipulations
 #include "nrf.h"
@@ -36,6 +46,7 @@ uint8_t pinCrankRevDebounceState = DEBOUNCE_IDLE;
 uint32_t pinCrankRevDebounceStartMillis;
 
 uint32_t ntfMillis = 0;
+uint32_t ntfErrors = 0;
 
 bool bleConnected = false;
 unsigned char csc_manufacturerData[] = "stefaanLLC";
@@ -49,6 +60,8 @@ BLECharacteristic charSpeedCadenceFeature = BLECharacteristic("2a5c", BLERead,2)
 U8G2_SSD1306_64X32_1F_F_4W_HW_SPI u8g2(U8G2_R0, /* cs=*/ 2, /* dc=*/ 0, /* reset=*/ 1); 
 uint32_t displayMillis;
 bool displayOn = false;
+#define DISPLAY_MAXPAGES 2
+uint8_t displayPageId = 0;
 
 void blePeripheralConnectHandler(BLECentral& central) {
   bleConnected = true;
@@ -73,7 +86,8 @@ void setup() {
   // master will contact slave at most every 500ms and at least 1/s
   // that's enough because we want to notify only 1/s
   // tried in connect/disconnect handler -> works sometimes
-  //blePeripheral.setConnectionInterval(400,800); // default : 40/80 = 50ms-100ms 
+  //blePeripheral.setConnectionInterval(400,800); // default : 40/80 = 50ms-100ms
+  blePeripheral.setConnectionInterval(120,240); // 400/800 didn't work reliably with nrfconnect, didn't check strava 
 
   blePeripheral.setLocalName(BLE_DEVICE_NAME); // optional
   blePeripheral.setManufacturerData(csc_manufacturerData, sizeof(csc_manufacturerData));
@@ -99,7 +113,8 @@ void setup() {
 
   // begin initialization
   blePeripheral.begin();
-  blePeripheral.setTxPower(-40); // -40dB for saving power, instead of 0dB default
+  //blePeripheral.setTxPower(-40); // -40dB for saving power, instead of 0dB default
+  blePeripheral.setTxPower(0); // is 40dB too weak? or does phone go to battery saving mode?
 
   // 2. setup wake-up from button & crankrev
   pinMode (pinButton, INPUT_PULLUP);
@@ -143,6 +158,7 @@ void notifyCrankRevs ()
     retval = charSpeedCadenceMeasurement.setValue(cadVal,5);
     if (!retval) {
       // too bad, hopefully better next time
+      ntfErrors++; // for debug, see if this causes missing data during ride
     }
   }
   
@@ -201,6 +217,13 @@ void displayPage (uint8_t pageId) {
     else u8g2.print("disconn");
     u8g2.sendBuffer();    
   }
+  else if (pageId == 1) {
+    // ble errors
+    u8g2.setCursor(1,10);
+    u8g2.print("err: ");
+    u8g2.print(ntfErrors);
+    u8g2.sendBuffer();    
+  }
   Wire.end(); // disable TWI peripheral
   
 } // displayPage
@@ -256,7 +279,9 @@ void loop() {
   if ((digitalRead(pinButton) == LOW) && ((millis() - displayMillis) > 500)) {
     displayMillis = millis();
     displayOn = true;
-    displayPage(0);
+    displayPage(displayPageId);
+    displayPageId++;
+    if (displayPageId >= DISPLAY_MAXPAGES) displayPageId = 0;
   }
   if (displayOn && ((millis() - displayMillis) > 5000)) {
     Wire.begin();

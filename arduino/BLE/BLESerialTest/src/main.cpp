@@ -1,3 +1,7 @@
+/* this is the sample sketch for the BLESerial implementation
+   BLESerial is buggy -> improved in KX022BleLog
+*/
+
 // Copyright (c) Sandeep Mistry. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 

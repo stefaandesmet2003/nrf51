@@ -1,7 +1,9 @@
+/* basic b-watch hardware test
+   press the button to toggle the vibrator
+   display slightly dimmed because target is powered from the st-link
+   optionally connect a serial-to-usb converter to catch serial output
+*/
 
-// druk op 't knoppeke en de vibrator gaat aan!
-// licht gaat een beetje uit op het display 
-// target wel gevoed via st-link 
 #include <Arduino.h>
 
 int pinBuzzer = 7;
@@ -17,11 +19,9 @@ void setup() {
   Serial.println("hello world");
 }
 bool hasToggled = true;
-// the loop function runs over and over again forever
+
 void loop() {
-  
-  if (digitalRead(pinButton) == 0)
-  {
+  if (digitalRead(pinButton) == 0) {
     if (hasToggled) {
       digitalWrite(pinBuzzer, !digitalRead(pinBuzzer));
       Serial.println("toggle buzzer!");
@@ -31,10 +31,4 @@ void loop() {
   else {
       hasToggled = true;
   }
-/*  
-  digitalWrite(pinTX, HIGH);    // turn the LED off by making the voltage HIGH
-  delay(1000);                       // wait for a second
-  digitalWrite(pinTX, LOW);    // turn the LED off by making the voltage LOW
-  delay(1000);                       // wait for a second
-  */
 }
