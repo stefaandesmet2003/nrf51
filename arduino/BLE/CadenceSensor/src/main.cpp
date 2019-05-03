@@ -32,6 +32,8 @@
 #define pinCrankRev   17 // RX = 0.17
 
 #define DEVICE_SLEEP_TIMEOUT 60000 //ms
+// nRF51822: -40, -30, -20, -16, -12, -8, -4, 0, 4
+#define BLE_TX_POWER_IN_DB (-12)   // 0dB works ok, -40dB is gentler on the battery, but doesn't work properly
 
 // debouncing reed contact
 #define DEBOUNCE_IDLE     0
@@ -113,8 +115,7 @@ void setup() {
 
   // begin initialization
   blePeripheral.begin();
-  //blePeripheral.setTxPower(-40); // -40dB for saving power, instead of 0dB default
-  blePeripheral.setTxPower(0); // is 40dB too weak? or does phone go to battery saving mode?
+  blePeripheral.setTxPower(BLE_TX_POWER_IN_DB);
 
   // 2. setup wake-up from button & crankrev
   pinMode (pinButton, INPUT_PULLUP);
@@ -198,8 +199,8 @@ void checkCrankRevs() {
 void displayPage (uint8_t pageId) {
   Wire.begin();
   u8g2.begin();
-  u8g2.clearBuffer();
   u8g2.setFont(u8g2_font_ncenB08_tr);
+  u8g2.setContrast(255); // 255 = highest possible 
 
   // page0 : batteryVoltage & crankRevs
   if (pageId == 0) {
@@ -285,9 +286,8 @@ void loop() {
   }
   if (displayOn && ((millis() - displayMillis) > 5000)) {
     Wire.begin();
-    u8g2.begin();
-    u8g2.clearBuffer();
-    u8g2.sendBuffer();
+    u8g2.clearDisplay();
+    u8g2.setPowerSave(1); // DISPLAY_OFF
     Wire.end();
     displayOn = false;
   }  
