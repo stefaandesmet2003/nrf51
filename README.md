@@ -7,4 +7,4 @@ in a tiny package that opens with screws, no need to cut glue, nice!
 the pcb has solder pads for GND,VCC,DIO,CLK,Tx & RX, everything you need to connect the ST-LINK programmer (debugger), and 
 a serial-to-USB converter for simple printf debug output
 
-to add : my failed experiment to retrieve the original firmware based on a published hack.
+/readout/* : info concerning the readout of the read-protected original firmware & how I eventually got the original firmware back working on the device
