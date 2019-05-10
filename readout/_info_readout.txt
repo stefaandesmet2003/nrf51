@@ -1,0 +1,85 @@
+
+*****************************************************************************************************************************
+readout protection van de flash
+*****************************************************************************************************************************
+flash readback is beschermd door een config NVM register UICR.RBPCONF @ 0x10001004 = 0xFFFF00FF
+--> dwz PALL enable, PR0 disable
+de flash is geconfigureerd zonder region 0 (CLENR0 = 0xFFFF.FFFF), dus PR0 doet toch niets
+om een NVM register te schrijven, moet je het eerst erasen, en daarvoor moet eerst de CONFIG.EEN (erase enable flag) worden gezet.
+Via ERASEUICR zou je enkel de UICR kunnen erase en RBPCONF herschrijven, maar dit werkt niet. Enkel ERASEALL werkt, en met dat commando wordt de volledige flash gewist. Op die manier kan je de flash dus niet uitlezen.
+Voor het herschrijven van RBPCONF moet je dus :
+1) CONFIG.EEN (0x4001E504 = 0x2) 
+2) CONFIG.ERASEALL (0x4001E50C = 1)
+3) CONFIG.WEN (0x4001E504 = 0x1)  -> write enable
+4) write UICR.RBPCONF = 0xFFFF.FFFF (geen readback protection) 
+5) CONFIG.WEN = 0 (0x4001E504 = 0x0) --> vermijdt dat je per ongeluk NVM wijzigt
+
+hebben we nog ergens readouts van deze registers?
+uitlezen met openocd - telnet
+> mdw 0x10001000 0x100  -> lees 100x 4 bytes
+
+*****************************************************************************************************************************
+readout van de flash
+*****************************************************************************************************************************
+http://blog.includesecurity.com/2015/11/NordicSemi-ARM-SoC-Firmware-dumping-technique.html
+
+de techniek staat hier beschreven, en werkt. Het script is wel specifiek voor een binary, dus enkel de methode is herbruikbaar; het script moet je aanpassen aan de specifieke bin-file.
+Maar de correcte flash contents heb ik niet gerecupeerd, waarschijnlijk omdat door de experimenten de flash al gecorrupted was. zie onder.
+
+de techniek bestaat er in een instructie te vinden die flash memory leest op een adres in een register, en het resultaat in een register schrijft.
+nRF51 flash is gemapt op address 0x0 -> 0x40000 (niet zoals STM32 op 0x8000000!!)
+
+Met de b-watch flash staat er een dergelijke instructie op PC = 0x700
+Het blijkt ldr r0, [r3,#0] te zijn : lees flash op addr aangegeven door r3 offset #0 en schrijf resultaat naar r0.
+er stond r3 = 0x3A000 (en dat stond in de config registers als bootloader address), dus zeker een flash address. Op pc=0x700 verandert r0 met iets wat als flash content lijkt, en geen hardcoded constant.
+truuk van de blog getest, en r3 = 4 -> r0 = 0x6D1 = reset vector (na reset halt is pc = 0x6D0). Blijkbaar is het zo dat voor nRF51 de reset vector op flash address 0x4 moet staan -> check refmanual!
+
+nu reg r3, 0x700 --> instructie op flash address 0x700 staat nu in r0 : 0x490a6818
+om de instructie te decoderen : zie blog. 0x6818 = ldr r0, [r3,#0], 0x490a = ldr r1, [pc, #40]
+we vermoedden een load instructie op addr 0x700 en dat klopt.
+
+nu moet je het script aanpassen om de hele flash uit te lezen.
+mijn eerste versie heeft waarschijnlijk de flash verkloot.
+idee was (dumpwatch_bpt_dontuse.ruby)
+1) reset halt
+2) bp 0x700 2 hw (zet hw breakpoint op addr 0x700), om te vermijden dat je 11 steps moet doen
+3) resume -> mcu stopt op het bp
+4) reg r3, <address>
+5) step
+6) reg r0 uitlezen
+
+probleem was dat na ongeveer 50000x de mcu niet stopte op het hw breakpoint (blijkbaar een probleem met openocd), en dan wijzig je een register en kan er om 't even wat gebeuren. de readback gaf dan ook steeds 0xffffffff.
+
+de 2de methode werkte wel, met een 2de watch, was nog simpeler  (dumpbwatch_jump_isok.ruby)
+1) reset halt
+2) pc 0x700 		-> de pc simpelweg op 0x700 zetten
+3) reg r3, <address>
+4) step
+5) reg r0 uitlezen
+
+reflash :
+
+> nrf5 mass_erase
+> program ./dump.bin verify 0x0
+
+--> het program command is een script dat met verschillende types files overweg kan (.bin, .hex, .elf)
+
+in de laatste stap de UICR.BOOTLOADERADDR terugschrijven na de mass erase :
+
+> mww 0x4001e504 0x1 (NVMC write enable)
+> mww 0x10001014 0x3a000
+> mww 0x4001e504 0x0 (NVMC write disable)
+
+
+meer info in Nordic SoftDevice Specification. De MBR boot de nRF51, en jumpt naar de custom bootloader op address UICR.BOOTLOADERADDR (als het een geldig flash address is). De custom bootloader weet waar de application in flash is geladen en start de application (of doet een dfu)
+Zonder init van UICR.BOOTLOADERADDR jumpt het SoftDevice naar een fixed flash address net boven het SoftDevice; dit is allicht niet hetzelfde als de application reset vector, en dus werkt het niet zonder correct UICR.BOOTLOADERADDR
+
+--> done!
+
+de SoftDevice Info Structure :
+$ hexdump dump.bin -n 16 -s 0x3000
+0003000 ff10 ffff e5db 51b1 8000 0001 0064 ffff
+0003010
+
+firmware ID = 0x0064 --> S110 v8.0.0 ( zie https://devzone.nordicsemi.com/f/nordic-q-a/1171/how-do-i-access-softdevice-version-string
+SoftDevice Size = 0x18000

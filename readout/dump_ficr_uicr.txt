@@ -1,0 +1,29 @@
+openocd -f interface/stlink.cfg -f target/nrf51.cfg
+telnet localhost 4444
+
+FICR
+*****
+
+> mdw 0x10000000 0x40
+0x10000000: 55aa55aa 55aa55aa ffffffff ffffffff 00000400 00000100 ffffffff ffffffff 
+0x10000020: ffffffff ffff0500 ffffffff ffffffff ffffff00 00000002 00002000 00002000 
+0x10000040: ffffffff ffffffff 97a3b60f 9f13f17e fffafff8 ffffffff 00000000 ffff00d2 
+0x10000060: a18f37da 609b5892 ffffffff ffffffff 38333256 04053338 ffffff20 ffffffff 
+0x10000080: 04e6bd08 458701ab c05b9826 de3263da 34f32589 a82b2630 f467040c 0a4e91af 
+0x100000a0: ffffffff 8ae614bb 3173b549 fffffff0 78005200 54000050 600c8005 00726424 
+0x100000c0: 8223423e 78005200 5c000050 600c8004 00666413 82a3c0de 7d005200 5c000050 
+0x100000e0: 600c800f 0072648a 8223423e 7d005200 5c000050 680e8806 00726424 8063423e 
+
+
+UICR
+****
+> mdw 0x10001000 0x40
+0x10001000: ffffffff ffff00ff ffffffff ffffffff ffffffff 0003a000 ffffffff ffffffff 
+0x10001020: ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff 
+0x10001040: ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff 
+0x10001060: ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff 
+0x10001080: ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff 
+0x100010a0: ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff 
+0x100010c0: ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff 
+0x100010e0: ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff 
+ 
